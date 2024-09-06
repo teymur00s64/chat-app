@@ -1,37 +1,42 @@
-import { CanActivate, ExecutionContext, UnauthorizedException } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { UserService } from "src/app/user/user.service";
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Observable } from 'rxjs';
+import { UserService } from 'src/app/user/user.service';
 
-export class AuthGuard implements CanActivate {
-    constructor(
-        private jwtService: JwtService,
-        private userService: UserService
-    ){}
+@Injectable()
+export class AuthGard implements CanActivate {
+  constructor(
+    private jwtService: JwtService,
+    private userService: UserService,
+  ) {}
 
-    async canActivate(context: ExecutionContext): Promise<boolean>
-    {
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    let req = context.switchToHttp().getRequest();
 
-        const req = context.switchToHttp().getRequest();
-        let token = req.headers.authorization || '';
-        token = token.split(' ')[1];
+    let token = req.headers.authorization || '';
+    token = token.split(' ')[1];
 
-        if(!token) throw new UnauthorizedException();
+    if (!token) throw new UnauthorizedException();
 
-        try {
-            
-            let payload = this.jwtService.verify(token)
-            if(!payload.userId) throw new Error();
+    try {
+      let payload = this.jwtService.verify(token);
+      if (!payload.userId) throw new Error();
 
-            let user = await this.userService.findOne({id: payload.userId})
-            if(!user) throw new UnauthorizedException();
+      let user = this.userService.findOne({ id: payload.userId });
+      if (!user) throw new Error();
 
-            req.user = user    
-
-        } catch (error) {
-        
-            throw new UnauthorizedException();
-
-        }
-   return true 
+      req.user = user;
+      return true;
+    } catch (err) {
+      console.log(err);
+      throw new UnauthorizedException();
     }
+  }
 }
