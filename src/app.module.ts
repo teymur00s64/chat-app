@@ -12,6 +12,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
 
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
+import { ClsModule } from 'nestjs-cls';
+import { FollowModule } from './app/follow/follow.module';
 
 @Module({
   imports: [
@@ -50,9 +52,17 @@ import { join } from 'path';
           strict: true,
         },
       },
+    }),ClsModule.forRoot({
+      middleware: {
+        mount: true,
+        setup: (cls, req) => {
+          cls.set('userId', req.headers['x-user-id']);
+        },
+      },
     }),
     AuthModule,
     UserModule,
+    FollowModule,
     UploadModule,
   ],
   controllers: [AppController],

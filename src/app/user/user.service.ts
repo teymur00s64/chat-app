@@ -1,8 +1,11 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/database/entities/User.entity';
-import { DeepPartial, FindOptionsWhere, Repository } from 'typeorm';
+import { DeepPartial, FindManyOptions, FindOptionsWhere, ILike, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
+import { SearchUserDto } from './dto/search-user.dto';
+import { FindUserParams } from './user.types';
+import { SEARCH_USER_SELECT } from './user.select';
 
 @Injectable()
 export class UserService {
@@ -10,6 +13,17 @@ export class UserService {
     @InjectRepository(User)
     private userRepo: Repository<User>,
   ) {}
+
+  find(params: FindUserParams){
+    const {where, select, relations, limit, page} = params;
+    const payload:FindManyOptions<User> = {where, select, relations}
+
+    if(limit>0) {
+      payload.take = limit;
+      payload.skip = limit* page
+    }
+    return this.userRepo.find(payload)
+  }
 
   findOne(where: FindOptionsWhere<User> | FindOptionsWhere<User>[]) {
     return this.userRepo.findOne({ where });
@@ -33,5 +47,26 @@ export class UserService {
 
   async update(id: number, params: Partial<User>) {
     await this.userRepo.update({ id }, params);
+  }
+
+  search(params: SearchUserDto) {
+    const {searchParam, page =0, limit = 10} = params;
+    let where:FindOptionsWhere<User>[] = [ 
+      {
+        userName: ILike(`${searchParam}%`),
+      }
+      ,
+      {
+        email: searchParam,
+      },
+      {
+        firstName: ILike(`${searchParam}%`),
+      },
+      {
+        lastName: ILike(`${searchParam}%`),
+      },
+    ];
+
+    return this.find({ where, select: SEARCH_USER_SELECT, page, limit })
   }
 }

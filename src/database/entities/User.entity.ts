@@ -32,6 +32,15 @@ export class User extends CommonEntity {
   @Column()
   birthDate: Date;
 
+  @Column({default: 0})
+  followedCount: number;
+
+  @Column({default: 0})
+  followerCount: number;
+
+  @Column({default: false})
+  isPrivate: boolean;
+
   @Column({
     type: 'enum',
     enum: UserGender,
