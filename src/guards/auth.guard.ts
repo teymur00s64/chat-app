@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ClsService } from 'nestjs-cls';
 import { Observable } from 'rxjs';
 import { UserService } from 'src/app/user/user.service';
 
@@ -13,6 +14,7 @@ export class AuthGard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private userService: UserService,
+    private cls: ClsService,
   ) {}
 
   canActivate(
@@ -32,7 +34,7 @@ export class AuthGard implements CanActivate {
       let user = this.userService.findOne({ id: payload.userId });
       if (!user) throw new Error();
 
-      req.user = user;
+      this.cls.set('user', user);
       return true;
     } catch (err) {
       console.log(err);

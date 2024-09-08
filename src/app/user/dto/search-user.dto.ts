@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsNumber, IsString, Length, Min, MinLength } from "class-validator";
+import { IsNumber, IsOptional, IsString, Length, Min, MinLength } from "class-validator";
 
 export class SearchUserDto {
     
@@ -12,13 +12,15 @@ export class SearchUserDto {
     
     @Type()
     @IsNumber()
-    @ApiProperty()
+    @IsOptional()
+    @ApiProperty({ required: false })
     @Length(0, 100)
     limit: number;
 
     @Type()
     @IsNumber()
-    @ApiProperty()
+    @IsOptional()
+    @ApiProperty({ required: false })
     @Min(0)
     page: number;
 }

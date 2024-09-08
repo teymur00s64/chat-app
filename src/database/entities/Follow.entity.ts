@@ -1,15 +1,15 @@
-import { Column, Entity } from "typeorm";
-import { CommonEntity } from "./Common.entity";
+import { Column, Entity, ManyToOne } from 'typeorm';
+import { CommonEntity } from './Common.entity';
+import { User } from './User.entity';
 
 @Entity()
-export class FollowEntity extends CommonEntity {
-    
-    @Column()
-    followerId: number;
+export class Follow extends CommonEntity {
+  @Column({ default: false })
+  isAccepted: boolean;
 
-    @Column()
-    followeId: number;
+  @ManyToOne(() => User, (user) => user.followers, { onDelete: 'CASCADE' })
+  followerUser: User;
 
-    @Column({default: false})
-    isAccepted: boolean;
+  @ManyToOne(() => User, (user) => user.followeds, { onDelete: 'CASCADE' })
+  followedUser: User;
 }

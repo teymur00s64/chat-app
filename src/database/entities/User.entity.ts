@@ -1,9 +1,10 @@
-import { BeforeInsert, Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { BeforeInsert, Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { CommonEntity } from './Common.entity';
 import { UserGender, UserRole } from 'src/shared/enum/user.enum';
 import { ImageEntity } from './Image.entity';
 
 import * as bcrypt from 'bcrypt';
+import { Follow } from './Follow.entity';
 
 @Entity()
 export class User extends CommonEntity {
@@ -59,6 +60,12 @@ export class User extends CommonEntity {
     array: true,
   })
   roles: UserRole[];
+
+  @OneToMany(() => Follow, (follow) => follow.followedUser)
+  followeds: Follow[];
+
+  @OneToMany(() => Follow, (follow) => follow.followerUser)
+  followers: Follow[];
 
   @BeforeInsert()
   beforeInsert() {
