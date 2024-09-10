@@ -31,7 +31,7 @@ export class AuthGard implements CanActivate {
       let payload = this.jwtService.verify(token);
       if (!payload.userId) throw new Error();
 
-      let user = this.userService.findOne({ id: payload.userId });
+      let user = this.userService.findOne({ where: { id: payload.userId } });
       if (!user) throw new Error();
 
       this.cls.set('user', user);

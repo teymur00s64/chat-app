@@ -1,10 +1,12 @@
-import { Controller, Get, NotFoundException, Param, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { AuthGard } from 'src/guards/auth.guard';
 import { User } from 'src/database/entities/User.entity';
 import { SearchUserDto } from './dto/search-user.dto';
 import { ClsService } from 'nestjs-cls';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { USER_PROFILE_SELECT } from './user.select';
 
 @Controller('user')
 @ApiTags('User')
@@ -17,15 +19,24 @@ export class UserController {
 
   @Get('profile')
   @UseGuards(AuthGard)
-  myProfile() {
-    let user = this.cls.get<User>('user');
-    return this.userService.findOne({ id: user.id });
+  async myProfile() {
+    let user = await this.cls.get<User>('user');
+    return this.userService.findOne({
+      where: { id: user.id },
+      select: USER_PROFILE_SELECT,
+    });
+  }
+
+  @Post('profile')
+  @UseGuards(AuthGard)
+  async updateProfile(@Body() body: UpdateUserDto) {
+    return this.userService.updateProfile(body);
   }
 
   @Get('profile/:id')
   @UseGuards(AuthGard)
   async userProfile(@Param('id') id: number) {
-    let user = await this.userService.findOne({ id });
+    let user = await this.userService.userProfile(id);
     if (!user) throw new NotFoundException();
     return user;
   }

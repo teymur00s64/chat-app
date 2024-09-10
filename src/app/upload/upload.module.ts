@@ -12,7 +12,7 @@ import { diskStorage } from 'multer';
     TypeOrmModule.forFeature([ImageEntity]),
     MulterModule.register({
       storage: diskStorage({
-        destination: join(__dirname, '../../uploads'),
+        destination: join(__dirname, '../../../uploads'),
         filename: (req, file, callback) => {
           callback(
             null,

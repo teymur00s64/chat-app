@@ -15,6 +15,7 @@ import { join } from 'path';
 import { ClsGuard, ClsModule } from 'nestjs-cls';
 import { APP_GUARD } from '@nestjs/core';
 import { FollowModule } from './app/follow/follow.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
@@ -58,6 +59,10 @@ import { FollowModule } from './app/follow/follow.module';
       global: true,
       middleware: { mount: true },
       guard: { mount: true },
+    }),
+    ServeStaticModule.forRoot({
+      serveRoot: '/uploads',
+      rootPath: join(__dirname, '../uploads')
     }),
     AuthModule,
     UserModule,

@@ -28,10 +28,9 @@ export class AuthService {
   ) {}
 
   async logIn(params: LoginUserDto) {
-    let user = await this.userService.findOne([
-      { userName: params.userName },
-      { email: params.userName },
-    ]);
+    let user = await this.userService.findOne({
+      where: [{ userName: params.userName }, { email: params.userName }],
+    });
 
     if (!user)
       throw new HttpException(
@@ -78,7 +77,9 @@ export class AuthService {
   }
 
   async forgetPassword(params: ForgetPasswordDto) {
-    let user = await this.userService.findOne({ email: params.email });
+    let user = await this.userService.findOne({
+      where: { email: params.email },
+    });
     if (!user) throw new NotFoundException();
 
     let activationToken = crypto.randomBytes(12).toString('hex');
@@ -106,7 +107,9 @@ export class AuthService {
   }
 
   async resetPassword(params: ResetPasswordDto) {
-    let user = await this.userService.findOne({ email: params.email });
+    let user = await this.userService.findOne({
+      where: { email: params.email },
+    });
     if (!user) throw new NotFoundException();
     if (user.activationToken != params.token)
       throw new HttpException('token is wrong', 400);

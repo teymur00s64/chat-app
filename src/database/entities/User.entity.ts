@@ -28,7 +28,7 @@ export class User extends CommonEntity {
 
   @OneToOne(() => ImageEntity, { eager: true })
   @JoinColumn()
-  profilePicture: ImageEntity;
+  profilePicture: Partial<ImageEntity>;
 
   @Column()
   birthDate: Date;
@@ -61,11 +61,11 @@ export class User extends CommonEntity {
   })
   roles: UserRole[];
 
-  @OneToMany(() => Follow, (follow) => follow.followedUser)
-  followeds: Follow[];
+  @OneToMany(() => Follow, (follow) => follow.followed)
+  iFollow: Follow[];
 
-  @OneToMany(() => Follow, (follow) => follow.followerUser)
-  followers: Follow[];
+  @OneToMany(() => Follow, (follow) => follow.follower)
+  myFollowers: Follow[];
 
   @BeforeInsert()
   beforeInsert() {
