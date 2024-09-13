@@ -37,15 +37,15 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     }),
     MailerModule.forRoot({
       transport: {
-        host: 'smtp.gmail.com',
-        port: 587,
+        host: 'config.smtp.host',
+        port: config.smtp.port,
         auth: {
-          user: 'elgizdivsmtp@gmail.com',
-          pass: 'zvngvgpdqizlemvi',
+          user: config.smtp.user,
+          pass: config.smtp.password,
         },
       },
       defaults: {
-        from: '"TalkyTown" <info@talkytown.com>',
+        from: config.smtp.from,
       },
       template: {
         dir: join(__dirname, 'templates'),
