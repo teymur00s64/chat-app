@@ -16,6 +16,8 @@ import { ClsGuard, ClsModule } from 'nestjs-cls';
 import { APP_GUARD } from '@nestjs/core';
 import { FollowModule } from './app/follow/follow.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { PostModule } from './app/post/post.module';
+import { ChatModule } from './app/chat/chat.module';
 
 @Module({
   imports: [
@@ -68,6 +70,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     UserModule,
     UploadModule,
     FollowModule,
+    PostModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [ 

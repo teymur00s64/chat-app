@@ -19,6 +19,7 @@ export const USER_PROFILE_SELECT: FindOptionsSelect<User> = {
     profilePicture: {
       url: true,
     },
+    birthDate: true,
     bio: true,
     isPrivate: true,
     followerCount: true,

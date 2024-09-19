@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/database/entities/User.entity';
 import { FindManyOptions, FindOptionsWhere, ILike, Not, Repository } from 'typeorm';
@@ -9,11 +9,14 @@ import { ClsService } from 'nestjs-cls';
 import { FindParams } from 'src/shared/types/find.params';
 import { FollowStatus } from 'src/shared/enum/follow.enum';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FollowService } from '../follow/follow.service';
 
 @Injectable()
 export class UserService {
   constructor(
     private cls: ClsService,
+    @Inject(forwardRef(() => FollowService))
+    private followService: FollowService,
     @InjectRepository(User)
     private userRepo: Repository<User>,
   ) {}
@@ -123,6 +126,12 @@ export class UserService {
     let payload: Partial<User> = {};
     for (let key in params) {
       switch (key) {
+        case 'isPrivate':
+          payload.isPrivate = params.isPrivate;
+          if (params.isPrivate === false) {
+            await this.followService.acceptAllRequsts(myUser.id);
+          }
+          break;
         case 'profilePictureId':
           payload.profilePicture = {
             id: params.profilePictureId,
