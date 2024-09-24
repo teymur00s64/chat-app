@@ -18,6 +18,8 @@ import { FollowModule } from './app/follow/follow.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { PostModule } from './app/post/post.module';
 import { ChatModule } from './app/chat/chat.module';
+import { SocketModule } from './socket/socket.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -37,6 +39,7 @@ import { ChatModule } from './app/chat/chat.module';
       secret: config.jwtSecret,
       signOptions: { expiresIn: '10d' },
     }),
+    EventEmitterModule.forRoot(),
     MailerModule.forRoot({
       transport: {
         host: 'config.smtp.host',
@@ -66,6 +69,7 @@ import { ChatModule } from './app/chat/chat.module';
       serveRoot: '/uploads',
       rootPath: join(__dirname, '../uploads')
     }),
+    SocketModule,
     AuthModule,
     UserModule,
     UploadModule,

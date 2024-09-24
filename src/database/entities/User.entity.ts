@@ -6,6 +6,7 @@ import { ImageEntity } from './Image.entity';
 import * as bcrypt from 'bcrypt';
 import { Follow } from './Follow.entity';
 import { PostEntity } from './Post.entity';
+import { ChatParticipant } from './ChatParticipant.entity';
 
 @Entity()
 export class User extends CommonEntity {
@@ -71,6 +72,9 @@ export class User extends CommonEntity {
 
   @OneToMany(() => Follow, (follow) => follow.follower)
   myFollowers: Follow[];
+
+  @OneToMany(() => ChatParticipant, (chatParticipant) => chatParticipant.user)
+  chatParticipants: ChatParticipant[];
 
   @BeforeInsert()
   beforeInsert() {
